@@ -148,6 +148,12 @@ function PopulateHgCommands() {
        }
     }
   }
+  # Add alias expansion
+  $hgCommands += (hg config alias) | % {
+      if($_ -match '^alias.(.*)=.*') {
+          $matches[1]
+      }
+  }
   
   $script:hgCommands = $hgCommands
 }
