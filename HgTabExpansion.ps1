@@ -165,7 +165,7 @@ function findBranchOrBookmarkOrTags($filter){
 }
 
 function hgLocalBranches($filter) {
-  hg branches -a | foreach {
+  hg branches | foreach {
     if($_ -match "(\S+) .*") {
       if($filter -and $matches[1].StartsWith($filter, "CurrentCultureIgnoreCase")) {
         $matches[1]
