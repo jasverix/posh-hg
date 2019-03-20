@@ -9,5 +9,6 @@ Export-ModuleMember -Function @(
   'Get-HgStatus',
   'TabExpansion',
   'Get-MqPatches',
-  'PopulateHgCommands'
+  'PopulateHgCommands',
+  'hg'
  )

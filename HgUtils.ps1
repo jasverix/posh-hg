@@ -145,3 +145,11 @@ function Get-AliasPattern($exe) {
   $aliases = @($exe) + @(Get-Alias | where { $_.Definition -eq $exe } | select -Exp Name)
   "($($aliases -join '|'))"
 }
+
+function hg {
+	hg.exe $args
+	
+	if($LastExitCode -ne 0) {
+		Write-Error -Message "hg.exe failed with an error ($LastExitCode)"
+	}
+}
