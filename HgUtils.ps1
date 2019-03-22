@@ -147,9 +147,33 @@ function Get-AliasPattern($exe) {
 }
 
 function hg {
-	hg.exe $args
+	if($args -eq "prp") {
+		Hg-Prp
+	} elseif ($args -eq "push") {
+		Hg-Push
+	} else {
+		hg.exe $args
+		
+		if($LastExitCode -ne 0) {
+			Throw "hg.exe failed with an error ($LastExitCode)"
+		}
+	}
+}
+
+function Hg-Push {
+	hg.exe push
+	
+	if($LastExitCode -ne 0 -And $LastExitCode -ne 1) {
+		Throw "Could not push, error ($LastExitCode)"
+	}
+}
+
+function Hg-Prp {
+	hg.exe pull --rebase
 	
 	if($LastExitCode -ne 0) {
-		Write-Error -Message "hg.exe failed with an error ($LastExitCode)"
+		Throw "Could not pull and rebase, error ($LastExitCode)"
 	}
+	
+	Hg-Push
 }
