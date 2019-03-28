@@ -12,7 +12,7 @@ function HgTabExpansion($lastBlock) {
 
     #handles hg update <branch name>
     #handles hg merge <branch name>
-    'hg (up|update|merge|co|checkout|pu|pm) (\S*)$' {
+    'hg (up|update|merge|co|checkout|pu|pm|closemerge|closebranch) (\S*)$' {
       findBranchOrBookmarkOrTags($matches[2])
     }
 
@@ -155,6 +155,7 @@ function PopulateHgCommands() {
     }
   }
 
+  $hgCommands += "closemerge"
   $script:hgCommands = $hgCommands
 }
 

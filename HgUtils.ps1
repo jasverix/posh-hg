@@ -148,6 +148,8 @@ function hg {
 		Hg-Prp
 	} elseif ($args -eq "push") {
 		Hg-Push
+	} elseif ($($args[0]) -eq "closemerge") {
+		Hg-CloseMerge $($args[1]) $($args[2])
 	} else {
 		hg.exe $args
 
@@ -173,4 +175,17 @@ function Hg-Prp {
 	}
 
 	Hg-Push
+}
+
+function Hg-CloseMerge($branch, $comment) {
+	if (!$branch) {
+		Throw "Hg-CloseMerge: no branch given!"
+	}
+	if (!$comment) {
+		Throw "Hg-CloseMerge: no comment given!"
+	}
+
+	hg.exe pull --rebase
+	hg.exe closebranch $branch "$comment"
+	hg.exe merge $branch
 }
