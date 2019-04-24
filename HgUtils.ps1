@@ -148,8 +148,18 @@ function hg {
 		Hg-Prp
 	} elseif ($args -eq "push") {
 		Hg-Push
+	} elseif ($($args[0]) -eq "closebranch") {
+		Hg-CloseBranch $($args[1]) $($args[2])
 	} elseif ($($args[0]) -eq "closemerge") {
 		Hg-CloseMerge $($args[1]) $($args[2])
+	} elseif ($args -eq "c") {
+		Hg-Clean
+	} elseif($args -eq "pr") {
+		Hg-PullRebase
+	} elseif ($($args[0]) -eq "pu") {
+		Hg-PullUpdate $($args[1])
+	} elseif ($($args[0]) -eq "pm") {
+		Hg-PullMerge $($args[1])
 	} else {
 		hg.exe $args
 
@@ -167,14 +177,59 @@ function Hg-Push {
 	}
 }
 
-function Hg-Prp {
+function Hg-PullRebase {
 	hg.exe pull --rebase
 
 	if($LastExitCode -ne 0) {
 		Throw "Could not pull and rebase, error ($LastExitCode)"
 	}
+}
 
+function Hg-PullUpdate ($branch) {
+	if ($branch -eq "") {
+		$branch = hg.exe branch
+	}
+
+	hg.exe pull
+	if($LastExitCode -ne 0) {
+		Throw "Could not pull, error ($LastExitCode)"
+	}
+
+	hg.exe update $branch
+	if($LastExitCode -ne 0) {
+		Throw "Could not update, error ($LastExitCode)"
+	}
+}
+
+function Hg-PullMerge ($branch) {
+	Hg-PullUpdate
+
+	hg.exe merge -r $branch
+
+	if($LastExitCode -ne 0) {
+		Throw "Could not merge, error ($LastExitCode)"
+	}
+}
+
+function Hg-Prp {
+	Hg-PullRebase
 	Hg-Push
+}
+
+function Hg-CloseBranch($branch, $comment) {
+	$currentBranch = hg.exe branch
+
+	hg.exe debugsetparent $branch
+	hg.exe branch $branch
+	hg.exe commit --close-branch -X * -m "$comment"
+	hg.exe debugsetparent $currentBranch
+	hg.exe update $currentBranch -C
+	Hg-Clean
+}
+
+function Hg-Clean {
+	hg.exe update -C
+	hg.exe purge
 }
 
 function Hg-CloseMerge($branch, $comment) {
@@ -186,6 +241,6 @@ function Hg-CloseMerge($branch, $comment) {
 	}
 
 	hg.exe pull --rebase
-	hg.exe closebranch $branch "$comment"
+	Hg-CloseBranch $branch $comment
 	hg.exe merge $branch
 }

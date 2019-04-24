@@ -5,16 +5,16 @@ Inspired by the Posh-Git project (http://github.com/dahlbyk/posh-git), Posh-Hg p
 
 ### Prompt for Hg repositories
    The prompt within Hg repositories can show the current branch and the state of files (additions, modifications, deletions) within.
-   
+
 ### Tab completion
-   Provides tab completion for common commands when using hg.  
+   Provides tab completion for common commands when using hg.
    E.g. `hg up<tab>` --> `hg update`
-   
+
 Usage
 -----
 
 See `profile.example.ps1` as to how you can integrate the tab completion and/or hg prompt into your own profile.
-Prompt formatting, among other things, can be customized using the `$PoshHgSettings` variable. 
+Prompt formatting, among other things, can be customized using the `$PoshHgSettings` variable.
 
 Installing
 ----------
@@ -31,6 +31,16 @@ Installing
 
 5. Enjoy!
 
+Changes to hg command
+---------------------
+
+PowerShell is not very good at handling errors from HG, so this extension will override hg with a PowerShell function that handles errors.
+Now, you can run commands like this:
+
+    hg pull ; hg merge feature/branch ; hg commit -m "Merge with feature" ; hg push
+
+and if one step fails (for instance the merge) then PowerShell will not execute the following steps.
+
 The Prompt
 ----------
 
@@ -43,18 +53,29 @@ By default, the status summary has the following format:
     [{HEAD-name} +A ~B -C ?D !E ^F <G:H>]
 
 * `{HEAD-name}` is the current branch, or the SHA of a detached HEAD
- * Cyan means the branch matches its remote
- * Red means the branch is behind its remote
+  * Cyan means the branch matches its remote
+  * Red means the branch is behind its remote
 * ABCDEFGH represent the working directory
- * `+` = Added files
- * `~` = Modified files
- * `-` = Removed files
- * `?` = Untracked files
- * `!` = Missing files
- * `^` = Renamed files
- * `<G:H>` = Current revision information matching the output of `hg log -r . --template '{rev}:{node|short}'`
+  * `+` = Added files
+  * `~` = Modified files
+  * `-` = Removed files
+  * `?` = Untracked files
+  * `!` = Missing files
+  * `^` = Renamed files
+  * `<G:H>` = Current revision information matching the output of `hg log -r . --template '{rev}:{node|short}'`
 
 Additionally, Posh-Hg can show any tags and bookmarks in the prompt as well as MQ patches if the MQ extension is enabled (disabled by default)
+
+Additional HG aliases
+---------------------
+
+* `hg pu $branch` - pull and update to branch. If branch is omitted (`hg pu`) then update to latest in current branch
+* `hg pr` - pull and rebase (requires rebase extension)
+* `hg pm $branch` - pull and merge with branch
+* `hg prp` - pull, rebase and push
+* `hg c` - clean and purge working directory
+* `hg closebranch $branch $comment` - close a branch with closing comment without updating to that branch
+* `hg closemerge $branch $comment` - run `closebranch` and then merge with that branch
 
 ### Based on work by:
 
