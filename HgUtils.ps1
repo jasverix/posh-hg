@@ -146,8 +146,9 @@ function Get-AliasPattern($exe) {
 function hg {
 	if($args -eq "prp") {
 		Hg-Prp
-	} elseif ($args -eq "push") {
-		Hg-Push
+	} elseif ($($args[0]) -eq "push") {
+		$passArguments = $args[1 .. ($args.Count - 1)]
+		Hg-Push @passArguments
 	} elseif ($($args[0]) -eq "closebranch") {
 		Hg-CloseBranch $($args[1]) $($args[2])
 	} elseif ($($args[0]) -eq "closemerge") {
@@ -170,7 +171,7 @@ function hg {
 }
 
 function Hg-Push {
-	hg.exe push
+	hg.exe push $args
 
 	if($LastExitCode -ne 0 -And $LastExitCode -ne 1) {
 		Throw "Could not push, error ($LastExitCode)"
