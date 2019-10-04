@@ -147,7 +147,12 @@ function hg {
 	if($args -eq "prp") {
 		Hg-Prp
 	} elseif ($($args[0]) -eq "push") {
-		$passArguments = $args[1 .. ($args.Count - 1)]
+		If ($args.Count -gt 1) {
+			$passArguments = $args[1 .. ($args.Count - 1)]
+		} Else {
+			$passArguments = @()
+		}
+
 		Hg-Push @passArguments
 	} elseif ($($args[0]) -eq "closebranch") {
 		Hg-CloseBranch $($args[1]) $($args[2])
